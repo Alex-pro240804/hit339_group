@@ -1,0 +1,37 @@
+﻿@model EasyGames.Models.Order
+@{
+    ViewData["Title"] = "Order Success";
+}
+<h1>Thank you!</h1>
+<p>Your order <strong>#@Model.Id</strong> was placed on @Model.CreatedAt.ToLocalTime().</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Line Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var it in Model.Items)
+        {
+            <tr>
+                <td>@it.Product?.Name</td>
+                <td>@it.UnitPrice.ToString("C")</td>
+                <td>@it.Quantity</td>
+                <td>@( (it.UnitPrice * it.Quantity).ToString("C") )</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="3" class="text-end">Total</th>
+            <th>@Model.Total.ToString("C")</th>
+        </tr>
+    </tfoot>
+</table>
+
+<a asp-controller="Products" asp-action="Index" class="btn btn-primary">Continue shopping</a>
+<a asp-controller="Orders" asp-action="My" class="btn btn-outline-secondary">View my orders</a>

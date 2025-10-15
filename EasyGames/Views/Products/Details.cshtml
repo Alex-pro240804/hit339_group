@@ -1,0 +1,31 @@
+﻿@model EasyGames.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+<div class="row">
+    <div class="col-md-5">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img class="img-fluid rounded" src="@Model.ImageUrl" alt="@Model.Name" />
+        }
+    </div>
+    <div class="col-md-7">
+        <h2>@Model.Name</h2>
+        <div class="text-muted mb-2">@Model.Category</div>
+        <p>@Model.Description</p>
+        <h4>@Model.Price.ToString("C")</h4>
+        <div class="mb-2">In stock: @Model.StockQty</div>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-secondary">Back</a>
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-primary">Add to Cart</button>
+            </form>
+        }
+        else
+        {
+            <p><a asp-area="Identity" asp-page="/Account/Login">Login</a> to add to cart.</p>
+        }
+    </div>
+</div>

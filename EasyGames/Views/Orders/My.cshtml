@@ -1,0 +1,53 @@
+﻿@model IEnumerable<EasyGames.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+    var revenue = (decimal)(ViewBag.Revenue ?? 0m);
+    var profit = (decimal)(ViewBag.Profit ?? 0m);
+    var tier = (string)(ViewBag.Tier ?? "Bronze");
+}
+
+<h1>My Orders</h1>
+
+<div class="mb-3">
+    <strong>Status:</strong> @tier<br />
+    <strong>Total Spent:</strong> @revenue.ToString("C")<br />
+    <strong>Estimated Profit Contribution:</strong> @profit.ToString("C")
+</div>
+
+@if (!Model.Any())
+{
+    <p>No orders yet.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                var total = o.Items?.Sum(i => i.UnitPrice * i.Quantity) ?? o.Total;
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.CreatedAt.ToLocalTime()</td>
+                    <td>@o.Status</td>
+                    <td>@(o.Items?.Count ?? 0)</td>
+                    <td>@total.ToString("C")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-primary">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

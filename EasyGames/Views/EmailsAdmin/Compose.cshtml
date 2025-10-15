@@ -1,0 +1,73 @@
+﻿@model EasyGames.Models.ViewModels.EmailBlastVM
+@{
+    ViewData["Title"] = "Email Groups";
+}
+
+<h1>Email Groups</h1>
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+@if (TempData["Ok"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+@if (TempData["Info"] is string info)
+{
+    <div class="alert alert-info">@info</div>
+}
+
+<form asp-action="Preview" method="post" class="mb-3">
+    <div class="mb-2">
+        <label class="form-label">Audience</label>
+        <select asp-for="Target" class="form-select" style="max-width:300px">
+            <option>All</option>
+            <option>Bronze</option>
+            <option>Silver</option>
+            <option>Gold</option>
+            <option>Platinum</option>
+        </select>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Subject</label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Body (HTML allowed)</label>
+        <textarea asp-for="Body" class="form-control" rows="6"></textarea>
+        <span asp-validation-for="Body" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-secondary">Preview</button>
+    </div>
+</form>
+
+@if (Model.RecipientCount > 0)
+{
+    <div class="mb-2">
+        <strong>Recipients:</strong> @Model.RecipientCount
+        <details class="mt-1">
+            <summary>Show list</summary>
+            <ul>
+                @foreach (var r in Model.Recipients)
+                {
+                    <li>@r</li>
+                }
+            </ul>
+        </details>
+    </div>
+
+    <form asp-action="Send" method="post" onsubmit="return confirm('Send email to @Model.RecipientCount recipient(s)?');">
+        <input type="hidden" asp-for="Target" />
+        <input type="hidden" asp-for="Subject" />
+        <input type="hidden" asp-for="Body" />
+        <button class="btn btn-primary">Send</button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,40 @@
+﻿@model EasyGames.Models.ViewModels.UserSalesHistoryVM
+@{
+    ViewData["Title"] = "User Sales History";
+}
+<h2>User Sales History</h2>
+<p>
+    <strong>User:</strong> @Model.Email<br />
+    <strong>Tier:</strong> @Model.Tier<br />
+    <strong>Total Revenue:</strong> @Model.Revenue.ToString("C")<br />
+    <strong>Total Profit:</strong> @Model.Profit.ToString("C")
+</p>
+<hr />
+<table class="table table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Items</th>
+            <th>Revenue</th>
+            <th>Profit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model.Orders)
+        {
+            var rev = o.Items.Sum(i => i.UnitPrice * i.Quantity);
+            var prof = o.Items.Sum(i => (i.UnitPrice - i.UnitBuyPrice) * i.Quantity);
+            <tr>
+                <td>@o.CreatedAt.ToLocalTime()</td>
+                <td>@o.Status</td>
+                <td>@o.Items.Count</td>
+                <td>@rev.ToString("C")</td>
+                <td>@prof.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p>
+    <a asp-action="Index">Back to Users</a>
+</p>

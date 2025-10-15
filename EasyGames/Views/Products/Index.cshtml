@@ -1,0 +1,57 @@
+﻿@model IEnumerable<EasyGames.Models.Product>
+@using EasyGames.Models
+@{
+    ViewData["Title"] = "Browse";
+    var selected = (ProductCategory?)ViewBag.SelectedCategory;
+    string search = ViewBag.Search as string ?? "";
+}
+
+<h1>Browse Products</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="category" class="form-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            @foreach (ProductCategory c in Enum.GetValues(typeof(ProductCategory)))
+            {
+                <option value="@c" selected="@(selected == c ? "selected" : null)">@c</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <input name="search" value="@search" class="form-control" placeholder="Search name or description" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No products found.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+        @foreach (var p in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
+                    {
+                        <img class="card-img-top" src="@p.ImageUrl" alt="@p.Name" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@p.Name</h5>
+                        <div class="small text-muted">@p.Category</div>
+                        <p class="card-text">@p.Description</p>
+                        <div class="fw-bold">@p.Price.ToString("C")</div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,59 @@
+﻿@model EasyGames.Models.Order
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+    var items = Model.Items ?? new List<EasyGames.Models.OrderItem>();
+    var revenue = items.Sum(i => i.UnitPrice * i.Quantity);
+    var profit = items.Sum(i => (i.UnitPrice - i.UnitBuyPrice) * i.Quantity);
+}
+
+<h1>Order #@Model.Id</h1>
+<p>
+    <strong>Date:</strong> @Model.CreatedAt.ToLocalTime()<br />
+    <strong>Status:</strong> @Model.Status
+</p>
+
+@if (!items.Any())
+{
+    <div class="alert alert-info">No items on this order.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Unit Cost</th>
+                <th class="text-end">Qty</th>
+                <th class="text-end">Line Total</th>
+                <th class="text-end">Line Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in items)
+            {
+                var lineTotal = i.UnitPrice * i.Quantity;
+                var lineProfit = (i.UnitPrice - i.UnitBuyPrice) * i.Quantity;
+                <tr>
+                    <td>@i.Product?.Name (@i.ProductId)</td>
+                    <td class="text-end">@i.UnitPrice.ToString("C")</td>
+                    <td class="text-end">@i.UnitBuyPrice.ToString("C")</td>
+                    <td class="text-end">@i.Quantity</td>
+                    <td class="text-end">@lineTotal.ToString("C")</td>
+                    <td class="text-end">@lineProfit.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-light">
+                <th colspan="4" class="text-end">Total</th>
+                <th class="text-end">@revenue.ToString("C")</th>
+                <th class="text-end">@profit.ToString("C")</th>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+<p>
+    <a asp-action="My" class="btn btn-secondary">Back to My Orders</a>
+</p>

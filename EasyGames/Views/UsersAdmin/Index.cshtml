@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "Manage Users";
+    var allRoles = (IEnumerable<string>)ViewBag.AllRoles;
+}
+<h1>Manage Users</h1>
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+@if (TempData["Ok"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Current Role(s)</th>
+            <th style="width:420px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>
+                    <!-- show roles here later -->
+                </td>
+                <td>
+                    <!--History link (Owner view of this user's sales) -->
+                    <a asp-action="History" asp-route-id="@u.Id" class="btn btn-sm btn-info text-white">
+                        History
+                    </a>
+
+                    <!-- set role -->
+                    <form asp-action="SetRole" method="post" class="d-inline ms-2">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <select name="role" class="form-select d-inline" style="width:auto; display:inline-block">
+                            @foreach (var r in allRoles)
+                            {
+                                <option value="@r">@r</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary ms-1">Set Role</button>
+                    </form>
+
+                    <!-- delete -->
+                    <form asp-action="Delete" method="post" class="d-inline ms-2"
+                          onsubmit="return confirm('Delete user @u.Email ?');">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
